@@ -55,8 +55,8 @@
 	NSString* appUrl=@"mutyda.com";
 	NSString* appScheme=@"auth";
 	
-	NSString* appid=@"07122dfe-3916-981b-cd4e-b55c4e03892f";
-	NSString* sid=@"18a2b988-06d5-44cc-9d19-29617ad0d5ce";
+	NSString* appid=@"id_вашего_сценария_из_личного_кабинете";
+	NSString* sid=@"случайным_образом_сгенерированная_строка";
 	
 	Mutyda* mutyda=[[Mutyda alloc] init];
 	[mutyda autenticationWithSID:sid appID:appid appScheme:appScheme appURL:appUrl];
@@ -66,11 +66,39 @@
 ```
 
 В качестве параметров вы должны передать URL и идентификатор схемы, которые вы определили в вашем plist файле. Значение **appid** вы должны указать то, которое сгенерировалось, когда вы создавали сценарий **(это ID сценария)** в вашем личном кабинете партнера на сайте Mutyda.com
-Значение **sid** - это своего рода идентификатор сессии. В качестве значения вы можете использовать любую сгенерированную вами случайную строку. Например это может быть сгенерированный GUID. Если вы при вызове метода autenticationWithSID каждый раз подаете разное значение **SID**, то mutyda сервис всегда будет начинать процесс авторизации с начала. Если вы уже прошли один раз авторизовались и в течении 10-и минут пытаетесь авторизоваться снова, причем значение sid вы передаете такое же как и первый раз, в этом случае mutyda сервис вас авторизует автоматически (таймаут сессии на сервере Mutyda равен 10-и минутам)
+Значение **sid** - это своего рода идентификатор сессии. В качестве значения вы можете использовать любую сгенерированную вами случайную строку. Например это может быть сгенерированный GUID. Если вы при вызове метода autenticationWithSID каждый раз подаете разное значение *sid**, то mutyda сервис всегда будет начинать процесс авторизации с начала. Если вы уже прошли один раз авторизовались и в течении 10-и минут пытаетесь авторизоваться снова, причем значение sid вы передаете такое же как и первый раз, в этом случае mutyda сервис вас авторизует автоматически (таймаут сессии на сервере Mutyda равен 10-и минутам)
 
+После вызова метода autenticationWithSID экземпляра класса Mutyda управление будет передано мобильному браузеру, который перенаправит вас на сайт https://mutyda.com и предолжит пройти процесс аутентификации инициатора запроса и будет ждать когда пользователь получит авторизацию на действие описанное в сценарии в личном кабинете.
+
+В не зависимости от того, успешно или нет авторизовался инициатор запроса браузер перенаправит пользователя обратно в приложение и вы должны обязательно в методе 
+
+**- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
+  sourceApplication:(NSString *)sourceApplication annotation:(id)annotation**
+  
+вашего делегата приложения осуществить проверку данных, которые вернул браузер. Для этого вам необходимо вызвать метод **checkAuthenticationResultFromURL** экземпляра класса Mutyda, который вернет строковое представление JSON объекта с данными о лидере группы. Если результат выполнения данного метода пустой, то эо значит, что авторизация на совершение действия согласно сценария не получена.
+
+
+```Objective-C
+@implementation MSAppDelegate
+
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
+  sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
+{
+    Mutyda* m=[[Mutyda alloc] init];
+    NSString* jsonMutydaData=[m checkAuthenticationResultFromURL:url];
+
+    if ([jsonMutydaData length]!=0)
+    {
+        NSLog(@"JSON string from Mutyda service: %@",jsonMutydaData);
+    }
+        NSLog(@"Authorization failed");
+
+    return YES;
+}
+```
 
 Готовый пример демонстрирующий авторизацию с помощью сервиса Mutyda вы можете загрузить с GitHub по адресу 
-[https://github.com/mutyda/mutyda-auth-ios-example][example]**
+[https://github.com/mutyda/mutyda-auth-ios-example][example]
 [example]: https://github.com/mutyda/mutyda-auth-ios-example
 
 
