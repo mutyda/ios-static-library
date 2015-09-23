@@ -23,19 +23,19 @@
 
 В появившемся окне нажмие кнопку “Add Other” и выбирите библиотеку libMutyda.a, которая находится в папке Lib вашего проекта.
 
-![build.gradle](https://mutyda.com/images/for-git/a7.png "build.gradle")
+![build.gradle](https://mutyda.com/images/for-git/a6.png "build.gradle")
 
 В результате у вас должно получиться следущее
 
-![build.gradle](https://mutyda.com/images/for-git/a8.png "build.gradle")
+![build.gradle](https://mutyda.com/images/for-git/a7.png "build.gradle")
 
 Перейдите на закладку “Build Settings” и отфильтруйте настройки по фразе “other linker”
 
-![build.gradle](https://mutyda.com/images/for-git/a9.png "build.gradle")
+![build.gradle](https://mutyda.com/images/for-git/a8.png "build.gradle")
 
 Добавьте параметр -ObjC ка показано на рисунке
 
-![build.gradle](https://mutyda.com/images/for-git/a10.png "build.gradle")
+![build.gradle](https://mutyda.com/images/for-git/a9.png "build.gradle")
 
 
 ## License
